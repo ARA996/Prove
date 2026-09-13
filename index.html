@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Prove It</title>
+
+<meta name="theme-color" content="#05060A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prove It">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #05060A;
+    --glass: rgba(255,255,255,0.045);
+    --glass-2: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.10);
+    --aqua: #6EE7F9;
+    --violet: #B388FF;
+    --mint: #86F5C0;
+    --amber: #FFD59E;
+    --text: #F3F5FB;
+    --text-dim: #9AA3B8;
+    --text-faint: #5C6478;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  html, body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    min-height:100vh; min-height:100dvh;
+    display:flex; justify-content:center;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    position:relative; overflow-x:hidden;
+  }
+
+  /* ambient glow field */
+  .aurora{
+    position: fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(480px 480px at 12% 8%, rgba(110,231,249,0.16), transparent 60%),
+      radial-gradient(520px 520px at 88% 78%, rgba(179,136,255,0.16), transparent 60%),
+      radial-gradient(600px 600px at 50% 100%, rgba(134,245,192,0.06), transparent 60%);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  .app{
+    width:100%; max-width:460px;
+    padding: 22px 18px 50px;
+    position:relative; z-index:1;
+  }
+
+  .app > *{
+    opacity:0;
+  }
+
+  .app.entered > *{
+    animation: riseIn 0.6s cubic-bezier(.22,.68,.36,1) forwards;
+  }
+
+  .app.entered > *:nth-child(1){ animation-delay: 0.02s; }
+  .app.entered > *:nth-child(2){ animation-delay: 0.08s; }
+  .app.entered > *:nth-child(3){ animation-delay: 0.14s; }
+  .app.entered > *:nth-child(4){ animation-delay: 0.20s; }
+  .app.entered > *:nth-child(5){ animation-delay: 0.26s; }
+  .app.entered > *:nth-child(6){ animation-delay: 0.30s; }
+  .app.entered > *:nth-child(7){ animation-delay: 0.34s; }
+  .app.entered > *:nth-child(8){ animation-delay: 0.38s; }
+  .app.entered > *:nth-child(9){ animation-delay: 0.42s; }
+  .app.entered > *:nth-child(10){ animation-delay: 0.46s; }
+  .app.entered > *:nth-child(11){ animation-delay: 0.50s; }
+  .app.entered > *:nth-child(12){ animation-delay: 0.54s; }
+  .app.entered > *:nth-child(13){ animation-delay: 0.58s; }
+  .app.entered > *:nth-child(14){ animation-delay: 0.62s; }
+  .app.entered > *:nth-child(15){ animation-delay: 0.66s; }
+  .app.entered > *:nth-child(16){ animation-delay: 0.70s; }
+  .app.entered > *:nth-child(17){ animation-delay: 0.74s; }
+
+  @keyframes riseIn{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .app > *{ opacity:1; }
+  }
+
+  /* ---------------- finale (Jan 1 takeover) ---------------- */
+  .finale{
+    min-height: 70vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding: 40px 10px;
+    opacity: 1 !important;
+  }
+
+  .finale-tag{
+    font-size:13px; color: var(--text-faint); letter-spacing:0.14em;
+    margin:0 0 14px;
+  }
+
+  .finale-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:56px; line-height:1;
+    margin:0 0 18px;
+    background: linear-gradient(120deg, var(--text) 20%, var(--aqua) 60%, var(--violet) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .finale-body{
+    font-size:15px; line-height:1.6; color: var(--text-dim);
+    max-width: 320px; margin: 0 0 22px;
+  }
+
+  .finale-stat{
+    font-size:14px; color: var(--mint); margin: 0 0 30px;
+    font-weight:500;
+  }
+
+  .finale-foot{ font-size:12.5px; color: var(--text-faint); margin:0; }
+
+  /* ---------------- entry gate ---------------- */
+  .gate{
+    position: fixed; inset:0; z-index:100;
+    background: var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 22px;
+    transition: opacity 0.6s ease;
+  }
+
+  .gate.hidden{ opacity:0; pointer-events:none; }
+
+  .gate .ring{
+    width: 84px; height:84px; border-radius:50%;
+    border: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 30%, rgba(110,231,249,0.18), rgba(179,136,255,0.10) 60%, transparent 75%);
+    animation: pulseRing 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulseRing{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(110,231,249,0.18); }
+    50%{ box-shadow: 0 0 0 14px rgba(110,231,249,0); }
+  }
+
+  .gate .dot{ width:10px; height:10px; border-radius:50%; background: linear-gradient(135deg, var(--aqua), var(--violet)); }
+
+  .gate .word{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500; font-size:14px;
+    letter-spacing: 0.16em;
+    color: var(--text-dim);
+  }
+
+  /* ---------------- top bar ---------------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+
+  .pill{
+    font-size:12px; color: var(--text-dim);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+    padding: 7px 13px; border-radius: 999px;
+  }
+
+  .pill b{
+    background: linear-gradient(90deg, var(--aqua), var(--violet));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    font-weight:600;
+  }
+
+  .pill, .iconbtn, .week .day, .habit, .card, .log, .confirm-btn, .confirmed-banner{
+    box-shadow: 0 10px 28px -16px rgba(0,0,0,0.6);
+  }
+
+  .iconbtn{
+    width:34px; height:34px; border-radius:50%;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); cursor:pointer;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .iconbtn:active{ transform: scale(0.92); }
+
+  .iconbtn svg{ width:15px; height:15px; }
+
+  /* ---------------- hero ---------------- */
+  .hero{ margin-bottom:32px; }
+
+  .hero .weekday{
+    font-size:17px; color: var(--text-dim); margin:0 0 2px;
+    letter-spacing:0.04em; font-weight:500;
+  }
+
+  .hero .daynum{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:158px; line-height:0.86;
+    margin:0;
+    background: linear-gradient(120deg, var(--text) 30%, var(--aqua) 70%, var(--violet) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    letter-spacing:-0.03em;
+  }
+
+  .hero .month{
+    font-size:16.5px; color: var(--text-dim); margin:8px 0 0;
+  }
+
+  .hero .month .cy{ color: var(--aqua); }
+
+  /* ---------------- section labels ---------------- */
+  .section-label{
+    font-size:12.5px; color: var(--text-faint); margin:0 0 12px;
+    font-weight:500; letter-spacing:0.02em;
+  }
+
+  /* ---------------- week strip ---------------- */
+  .week{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:32px; }
+
+  .week .day{
+    aspect-ratio:1; border-radius:16px;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; position:relative;
+  }
+
+  .week .day .dl{ font-size:10px; color: var(--text-faint); }
+  .week .day .dn{ font-size:13px; color: var(--text-dim); font-weight:500; }
+
+  .week .day.today{
+    border-color: rgba(110,231,249,0.5);
+    box-shadow: 0 0 0 1px rgba(110,231,249,0.12), 0 0 20px rgba(110,231,249,0.10);
+  }
+  .week .day.today .dn{ color: var(--aqua); }
+
+  .week .day.confirmed{ border-color: rgba(134,245,192,0.45); }
+  .week .day.missed{ border-color: rgba(255,107,107,0.4); }
+  .week .day.missed .dn{ color: #FF9A9A; }
+
+  .week .day .fill{ position:absolute; left:7px; right:7px; bottom:7px; height:3px; border-radius:3px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .week .day .fill i{
+    display:block; height:100%; width:var(--pct,0%);
+    background: linear-gradient(90deg, var(--aqua), var(--mint));
+    transition: width 0.4s ease;
+  }
+
+  /* ---------------- year map (countdown calendar) ---------------- */
+  .yearmap{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(13px, 1fr));
+    gap: 4px;
+    margin-bottom: 10px;
+    padding: 14px;
+    border-radius: 18px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+
+  .yearmap .yd{
+    aspect-ratio:1;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .yearmap .yd.today{
+    background: linear-gradient(135deg, var(--aqua), var(--violet));
+    box-shadow: 0 0 6px rgba(110,231,249,0.6);
+  }
+
+  .yearmap .yd.confirmed{ background: var(--mint); }
+  .yearmap .yd.missed{ background: rgba(255,107,107,0.55); }
+
+  .yearmap-legend{
+    display:flex; gap:16px; justify-content:center;
+    font-size:11px; color: var(--text-faint);
+    margin: 0 0 30px;
+  }
+
+  .yearmap-legend span{ display:flex; align-items:center; gap:5px; }
+
+  .yearmap-legend .dot{ width:7px; height:7px; border-radius:2px; display:inline-block; }
+  .yearmap-legend .dot.ok{ background: var(--mint); }
+  .yearmap-legend .dot.miss{ background: rgba(255,107,107,0.55); }
+  .yearmap-legend .dot.future{ background: rgba(255,255,255,0.15); }
+
+  /* ---------------- habits ---------------- */
+  .habits{ margin-bottom:30px; }
+
+  .habit{
+    display:flex; align-items:center; gap:14px;
+    padding:15px 16px; border-radius:18px;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+    margin-bottom:10px; cursor:pointer; user-select:none;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+
+  .habit:active{ transform: scale(0.99); }
+
+  .habit.done{ border-color: rgba(134,245,192,0.4); background: rgba(134,245,192,0.06); }
+
+  .habit .check{
+    width:26px; height:26px; border-radius:50%;
+    border:1.5px solid var(--text-faint);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition: all 0.25s ease;
+  }
+
+  .habit.done .check{
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--mint), var(--aqua));
+  }
+
+  .habit .check svg{ width:13px; height:13px; opacity:0; transform: scale(0.4); transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.34,1.56,.64,1); }
+  .habit.done .check svg{ opacity:1; transform: scale(1); }
+
+  .habit .label{ font-size:15px; font-weight:500; color:var(--text); }
+  .habit.done .label{ color: var(--text-dim); }
+
+  .habit.locked{ cursor:default; }
+  .habit.locked:active{ transform:none; }
+
+  .confirm-btn{
+    width:100%; padding:15px; border-radius:18px; margin-bottom:10px;
+    background: rgba(255,255,255,0.03); border:1px dashed var(--border);
+    color: var(--text-faint); font-family:'Inter',sans-serif; font-weight:600; font-size:14px;
+    cursor: not-allowed; transition: all 0.25s ease;
+  }
+
+  .confirm-btn.ready{
+    background: linear-gradient(135deg, rgba(110,231,249,0.18), rgba(179,136,255,0.18));
+    border: 1px solid rgba(110,231,249,0.4);
+    color: var(--text); cursor:pointer;
+  }
+  .confirm-btn.ready:active{ transform: scale(0.98); }
+
+  .confirmed-banner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 16px; margin-bottom: 20px;
+    border-radius:16px;
+    background: rgba(134,245,192,0.07); border:1px solid rgba(134,245,192,0.25);
+    font-size:13px; color: var(--mint);
+    animation: bannerPop 0.4s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  @keyframes bannerPop{
+    0%{ opacity:0; transform: scale(0.94) translateY(4px); }
+    100%{ opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  .confirmed-banner .left{ display:flex; align-items:center; gap:9px; }
+  .confirmed-banner svg{ width:16px; height:16px; flex-shrink:0; }
+
+  .confirmed-banner button{
+    background:none; border:none; color: var(--text-dim);
+    font-family:'Inter',sans-serif; font-size:12.5px; text-decoration:underline;
+    cursor:pointer; padding:0;
+  }
+
+  .confirm-hint{
+    text-align:center; font-size:11.5px; color: var(--text-faint);
+    margin: -2px 0 12px;
+  }
+
+  /* ---------------- cards ---------------- */
+  .card{
+    border-radius:20px; padding:20px 20px 18px; margin-bottom:14px;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+    border-top: 2px solid rgba(110,231,249,0.5);
+  }
+
+  .card.philosophy{ border-top-color: rgba(179,136,255,0.55); }
+
+  .card.esteem{
+    border-top: none;
+    background: linear-gradient(160deg, rgba(255,213,158,0.10), rgba(255,255,255,0.03));
+    border-color: rgba(255,213,158,0.20);
+  }
+
+  .card .kicker{ font-size:11.5px; color: var(--text-faint); margin:0 0 10px; font-weight:500; }
+
+  .card .quote{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:18px; line-height:1.5; font-weight:500;
+    color: var(--text); margin:0;
+  }
+
+  .card.philosophy .quote{ font-style:italic; font-weight:400; }
+  .card.philosophy .source{ display:block; margin-top:10px; font-size:12px; color: var(--violet); font-family:'Inter',sans-serif; font-style:normal; }
+  .card.esteem .quote{ color: #FFEBCF; }
+
+  /* ---------------- daily log ---------------- */
+  .log{
+    border-radius:20px; padding:18px 18px 16px; margin-bottom:32px;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+
+  .log textarea{
+    width:100%; min-height:74px; background:transparent; border:none; outline:none;
+    color: var(--text); font-family:'Inter',sans-serif; font-size:14.5px; line-height:1.55;
+    resize:vertical;
+  }
+  .log textarea::placeholder{ color: var(--text-faint); }
+
+  /* ---------------- support / donation ---------------- */
+  .support, .progress-card{
+    border-radius:20px; padding:18px 18px 16px; margin-bottom:16px;
+    background: var(--glass); border:1px solid var(--border);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 28px -16px rgba(0,0,0,0.6);
+  }
+
+  .support{ margin-bottom:26px; }
+
+  .support-text{
+    font-size:13px; line-height:1.55; color: var(--text-dim);
+    margin: 0 0 14px;
+  }
+
+  .btc-row{
+    width:100%; display:flex; align-items:center; gap:10px;
+    background: rgba(255,255,255,0.04); border:1px solid var(--border);
+    border-radius:12px; padding: 10px 12px;
+    cursor:pointer; text-decoration:none;
+    box-sizing:border-box;
+  }
+
+  .btc-row:active{ transform: scale(0.99); }
+
+  .btc-label{
+    font-size:11px; font-weight:700; letter-spacing:0.06em;
+    color: var(--amber);
+    background: rgba(255,213,158,0.12);
+    padding: 3px 7px; border-radius:6px;
+    flex-shrink:0;
+  }
+
+  .btc-address{
+    font-family: 'Space Grotesk', monospace;
+    font-size:12.5px; color: var(--text);
+    overflow-x:auto; white-space:nowrap;
+    text-align:left;
+  }
+
+  .btc-qr{
+    display:block;
+    width:128px; height:128px;
+    margin: 14px auto 0;
+    border-radius:12px;
+    background:#fff;
+    padding:8px;
+  }
+
+  /* ---------------- footer / hidden trigger ---------------- */
+  .footer{ margin-top:8px; display:flex; justify-content:center; align-items:center; gap:14px; }
+
+  .line{ width:26px; height:1px; background: var(--border); }
+
+  .signal{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--text-faint);
+    border:none; padding:14px; position:relative; cursor:default;
+  }
+  .signal::after{
+    content:''; position:absolute; inset:0; margin:auto;
+    width:6px; height:6px; border-radius:50%;
+    background: var(--text-faint);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .signal.lit::after{ background: var(--aqua); box-shadow:0 0 10px rgba(110,231,249,0.6); }
+
+  /* ---------------- whisper ---------------- */
+  .whisper{
+    position:fixed; left:50%; bottom:90px; transform:translateX(-50%) translateY(6px);
+    max-width:300px; text-align:center;
+    background: rgba(14,15,22,0.9);
+    border:1px solid var(--border);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    padding:14px 18px; border-radius:16px;
+    font-family:'Space Grotesk', sans-serif; font-style:italic; font-size:14.5px; color: var(--text-dim);
+    opacity:0; pointer-events:none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index:40;
+  }
+  .whisper.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .whisper.deny{ border-color: rgba(255,107,107,0.5); color:#FF9A9A; }
+
+  /* ---------------- veil / prompt ---------------- */
+  .veil{
+    position:fixed; inset:0; background: rgba(2,2,6,0.7); backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center; padding:24px; z-index:50;
+    opacity:0; pointer-events:none; transition: opacity 0.25s ease;
+  }
+  .veil.show{ opacity:1; pointer-events:all; }
+
+  .term{
+    width:100%; max-width:340px; border-radius:20px; padding:20px;
+    background: rgba(14,15,22,0.9);
+    border:1px solid var(--border);
+    backdrop-filter: blur(24px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .term .line1{ font-size:13px; color: var(--text); margin:0 0 4px; font-weight:500; }
+  .term .line1 span{ display:block; font-size:12px; color: var(--text-faint); font-weight:400; margin-top:2px; }
+
+  .term input, .term textarea{
+    width:100%; margin-top:12px;
+    background: rgba(255,255,255,0.04);
+    border:1px solid var(--border); border-radius:12px;
+    color: var(--text); font-family:'Inter',sans-serif; font-size:14px;
+    padding:11px 12px; outline:none;
+  }
+  .term input:focus, .term textarea:focus{ border-color: rgba(110,231,249,0.5); }
+  .term textarea{ min-height:80px; resize:vertical; }
+
+  .term .row{ display:flex; gap:10px; margin-top:14px; }
+
+  .term button{
+    flex:1; padding:11px; border-radius:10px;
+    background: rgba(255,255,255,0.04); border:1px solid var(--border);
+    color: var(--text-dim); font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
+    cursor:pointer;
+  }
+
+  .term button.primary{
+    background: linear-gradient(135deg, var(--aqua), var(--violet));
+    border-color: transparent; color: #06070C;
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora"></div>
+
+<div class="gate" id="gate">
+  <div class="ring"><div class="dot"></div></div>
+  <div class="word">TAP TO ENTER</div>
+</div>
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="pill" id="countdown"></div>
+    <button class="iconbtn" id="soundBtn" aria-label="sound toggle">
+      <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="hero">
+    <p class="weekday" id="weekday"></p>
+    <p class="daynum" id="daynum"></p>
+    <p class="month" id="month"></p>
+  </div>
+
+  <p class="section-label" id="weekLabel">This week</p>
+  <div class="week" id="week"></div>
+
+  <p class="section-label" id="yearLabel">Countdown to Jan 1</p>
+  <div class="yearmap" id="yearmap"></div>
+  <p class="yearmap-legend">
+    <span><i class="dot ok"></i>confirmed</span>
+    <span><i class="dot miss"></i>missed</span>
+    <span><i class="dot future"></i>ahead</span>
+  </p>
+
+  <p class="section-label">Today</p>
+  <div class="habits" id="habits"></div>
+  <div id="confirmWrap"></div>
+
+  <div class="card">
+    <p class="kicker">No excuses</p>
+    <p class="quote" id="motivation"></p>
+  </div>
+
+  <div class="card philosophy">
+    <p class="kicker">A thought to sit with</p>
+    <p class="quote" id="philosophy"></p>
+    <span class="source" id="philosophySource"></span>
+  </div>
+
+  <div class="card esteem">
+    <p class="kicker">For the record</p>
+    <p class="quote" id="esteem"></p>
+  </div>
+
+  <p class="section-label">Daily log</p>
+  <div class="log">
+    <textarea id="logInput" placeholder="How did today actually go..."></textarea>
+  </div>
+
+  <div class="progress-card">
+    <p class="support-text">If you want, send a before-and-after — or just a photo of how far along you are — and we'll be proud of it with you. If you're comfortable, we might feature it (never without asking you first).</p>
+    <a class="btc-row" id="progressMail" href="mailto:sh.xdv0@gmail.com?subject=My%20progress&body=Attach%20your%20photo%20here%20and%20tell%20us%20a%20bit%20about%20your%20days.">
+      <span class="btc-label">PHOTO</span>
+      <span class="btc-address">sh.xdv0@gmail.com</span>
+    </a>
+  </div>
+
+  <div class="support">
+    <p class="support-text">This app is free, and it'll stay that way. If it's helped you show up for yourself even a little, and you ever feel like sending something back, it's never expected — but it's genuinely appreciated.</p>
+    <button class="btc-row" id="btcCopy">
+      <span class="btc-label">BTC</span>
+      <span class="btc-address" id="btcAddress">1GiXCtuZM1m9vR4ncaPzhYeCG9JUuy1X2X</span>
+    </button>
+    <img class="btc-qr" src="btc-qr.jpeg" alt="Bitcoin address QR code" width="128" height="128">
+  </div>
+
+  <div class="footer">
+    <span class="line"></span>
+    <button class="signal" id="secretBtn" aria-label=""></button>
+    <span class="line"></span>
+  </div>
+
+</div>
+
+<div class="whisper" id="whisper"></div>
+
+<div class="veil" id="veil">
+  <div class="term" id="termBox"></div>
+</div>
+
+<div id="ytHolder" style="position:fixed;width:2px;height:2px;bottom:0;left:0;opacity:0;pointer-events:none;overflow:hidden;"></div>
+
+<script>
+(function(){
+
+  /* ---------------- date helpers ---------------- */
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const fmt = (d) => d.toISOString().slice(0,10);
+  const dayOfYear = (d) => Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+
+  const weekdayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  document.getElementById('weekday').textContent = weekdayNames[today.getDay()];
+  document.getElementById('daynum').textContent = today.getDate();
+  document.getElementById('month').innerHTML = monthNames[today.getMonth()] + ' ' + today.getFullYear() + ' <span class="cy">· active</span>';
+
+  /* ---------------- countdown ---------------- */
+  let nextNewYear = new Date(today.getFullYear() + 1, 0, 1);
+  if (today.getMonth() === 0 && today.getDate() === 1) {
+    document.getElementById('countdown').innerHTML = `<b>Day one</b>`;
+  } else {
+    const diff = Math.round((nextNewYear - today) / 86400000);
+    document.getElementById('countdown').innerHTML = `<b>${diff}</b> days to ${nextNewYear.getFullYear()}`;
+  }
+
+  /* ---------------- storage ---------------- */
+  const STORE_KEY = 'present_habits_v1';
+  const store = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+  const saveStore = () => localStorage.setItem(STORE_KEY, JSON.stringify(store));
+
+  const HABITS = [
+    { id:'eat', label:'Ate well' },
+    { id:'move', label:'Trained / gym' },
+    { id:'walk', label:'Walked' }
+  ];
+
+  function dayRecord(key){ if (!store[key]) store[key] = {}; return store[key]; }
+  function completionCount(key){ const rec = store[key] || {}; return HABITS.reduce((n,h)=>n+(rec[h.id]?1:0),0); }
+  function isConfirmed(key){ return !!(store[key] && store[key].confirmed); }
+
+  const todayKey = fmt(today);
+  const habitsEl = document.getElementById('habits');
+  const confirmWrap = document.getElementById('confirmWrap');
+
+  function renderHabits(){
+    const rec = dayRecord(todayKey);
+
+    if (rec.confirmed){
+      habitsEl.innerHTML = '';
+      HABITS.forEach(h => {
+        const div = document.createElement('div');
+        div.className = 'habit done locked';
+        div.innerHTML = `
+          <div class="check">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="#06070C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="label">${h.label}</div>
+        `;
+        habitsEl.appendChild(div);
+      });
+      confirmWrap.innerHTML = `
+        <div class="confirmed-banner">
+          <span class="left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            Today is locked in
+          </span>
+          <button id="editDay">Edit</button>
+        </div>
+      `;
+      document.getElementById('editDay').addEventListener('click', () => {
+        rec.confirmed = false;
+        saveStore();
+        renderHabits();
+        renderWeek();
+        renderYearmap();
+        renderStreak();
+      });
+      return;
+    }
+
+    habitsEl.innerHTML = '';
+    HABITS.forEach(h => {
+      const done = !!rec[h.id];
+      const div = document.createElement('div');
+      div.className = 'habit' + (done ? ' done' : '');
+      div.innerHTML = `
+        <div class="check">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="#06070C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="label">${h.label}</div>
+      `;
+      div.addEventListener('click', () => {
+        rec[h.id] = !rec[h.id];
+        saveStore();
+        renderHabits();
+        renderWeek();
+        renderYearmap();
+      });
+      habitsEl.appendChild(div);
+    });
+
+    const checkedCount = HABITS.filter(h => !!rec[h.id]).length;
+    const allChecked = checkedCount === HABITS.length;
+    confirmWrap.innerHTML = `
+      <button class="confirm-btn${allChecked ? ' ready' : ''}" id="confirmBtn" ${allChecked ? '' : 'disabled'}>
+        ${allChecked ? 'Confirm today' : 'Confirm today'}
+      </button>
+      ${allChecked ? '' : `<p class="confirm-hint">${checkedCount} of 3 checked</p>`}
+    `;
+    if (allChecked){
+      document.getElementById('confirmBtn').addEventListener('click', () => {
+        rec.confirmed = true;
+        saveStore();
+        renderHabits();
+        renderWeek();
+        renderYearmap();
+        renderStreak();
+      });
+    }
+  }
+
+  /* ---------------- week strip ---------------- */
+  const weekEl = document.getElementById('week');
+  function startOfWeek(d){ const c = new Date(d); c.setDate(c.getDate() - c.getDay()); return c; }
+
+  function renderWeek(){
+    weekEl.innerHTML = '';
+    const start = startOfWeek(today);
+    for (let i=0;i<7;i++){
+      const d = new Date(start); d.setDate(start.getDate()+i);
+      const key = fmt(d);
+      const isToday = key === todayKey;
+      const isFuture = d > today;
+      const completion = completionCount(key);
+      const pct = isFuture ? 0 : Math.round((completion / HABITS.length) * 100);
+      const confirmed = isConfirmed(key);
+      const missed = !isFuture && !isToday && !confirmed;
+      const cell = document.createElement('div');
+      cell.className = 'day' + (isToday ? ' today' : '') + (confirmed ? ' confirmed' : '') + (missed ? ' missed' : '');
+      cell.innerHTML = `<span class="dl">${weekdayNames[d.getDay()].slice(0,1)}</span><span class="dn">${d.getDate()}</span><span class="fill"><i style="--pct:${pct}%"></i></span>`;
+      weekEl.appendChild(cell);
+    }
+  }
+
+  /* ---------------- streak ---------------- */
+  const weekLabelEl = document.getElementById('weekLabel');
+  function renderStreak(){
+    let streak = 0;
+    let cursor = new Date(today);
+    while (true){
+      const key = fmt(cursor);
+      if (isConfirmed(key)) { streak++; cursor.setDate(cursor.getDate()-1); }
+      else break;
+    }
+    weekLabelEl.textContent = 'This week · ' + streak + (streak === 1 ? ' day streak' : ' day streak');
+  }
+
+  /* ---------------- year map: countdown to Jan 1 ---------------- */
+  const yearmapEl = document.getElementById('yearmap');
+  const yearLabelEl = document.getElementById('yearLabel');
+
+  // Persist the day tracking actually began, so the map (and the missed-day
+  // count) keeps every day from then on — including days you didn't open
+  // the app — instead of quietly starting over from "today" on every visit.
+  const START_KEY = 'present_start_date';
+  let startDateStr = localStorage.getItem(START_KEY);
+  const startYear = startDateStr ? parseInt(startDateStr.slice(0,4), 10) : null;
+  if (!startDateStr || startYear !== today.getFullYear()){
+    startDateStr = todayKey;
+    localStorage.setItem(START_KEY, startDateStr);
+  }
+  const trackingStart = new Date(startDateStr + 'T00:00:00');
+
+  function renderYearmap(){
+    yearmapEl.innerHTML = '';
+    const endOfYear = new Date(today.getFullYear(), 11, 31);
+    let confirmedCount = 0;
+    let missedCount = 0;
+    const cursor = new Date(trackingStart);
+    while (cursor <= endOfYear){
+      const key = fmt(cursor);
+      const isToday = key === todayKey;
+      const isFuture = cursor > today;
+      const confirmed = isConfirmed(key);
+      const missed = !isFuture && !isToday && !confirmed;
+      if (confirmed) confirmedCount++;
+      if (missed) missedCount++;
+
+      const cell = document.createElement('div');
+      cell.className = 'yd' + (isToday ? ' today' : '') + (confirmed ? ' confirmed' : '') + (missed ? ' missed' : '');
+      cell.title = key;
+      yearmapEl.appendChild(cell);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    const daysLeft = Math.round((endOfYear - today) / 86400000);
+    yearLabelEl.textContent = `Countdown to Jan 1 · ${confirmedCount} confirmed · ${missedCount} missed · ${daysLeft} to go`;
+  }
+
+  /* ---------------- daily content ---------------- */
+  const MOTIVATION_A = [
+    "Excuses don't build anything. Get up.",
+    "Comfort is the enemy today. Move anyway.",
+    "Nobody is coming to save your goals. Do it yourself.",
+    "Stop waiting for motivation. Discipline doesn't ask permission.",
+    "You already know what you have to do. Stop stalling.",
+    "Weak effort gets weak results. Choose different.",
+    "The version of you that quits today loses to the one who shows up.",
+    "Pain is temporary. Regret sticks around.",
+    "Talk is cheap. Today is proof or it's nothing.",
+    "You don't get to feel like it. You just get to do it.",
+    "Every excuse is a vote against who you want to become.",
+    "Get uncomfortable on purpose. That's where it happens.",
+    "Nobody remembers the day you didn't feel like it. Show up anyway.",
+    "Your only competition is who you were yesterday. Beat them.",
+    "Stop negotiating with your own laziness.",
+    "Cut the noise. Do the work.",
+    "You don't need a pep talk. You need to move.",
+    "Soft days build soft habits. Choose hard today.",
+    "The work doesn't care about your mood.",
+    "Push till it's done, not until it's easy.",
+    "Discomfort is just weakness leaving through effort.",
+    "Later is a lie you tell yourself to feel better right now.",
+    "You don't rise to your goals. You fall to your habits. Fix the habits."
+  ];
+
+  const MOTIVATION_B = [
+    "Get up and prove it.",
+    "Move first, feel later.",
+    "No one's grading effort. Results only.",
+    "Today doesn't ask how you feel about it.",
+    "Quit negotiating. Start moving.",
+    "The mirror doesn't lie. Show it something new.",
+    "Weak moments don't get a vote.",
+    "Handle it before it handles you.",
+    "Comfort later. Work first.",
+    "You don't feel like it. Do it anyway.",
+    "Nobody's coming. Move.",
+    "Discipline over mood, every time.",
+    "The clock doesn't wait for motivation.",
+    "Stop deliberating. Start moving.",
+    "Today's excuse expires the second you stand up.",
+    "Prove today wasn't wasted.",
+    "Effort now, explanations never.",
+    "You already decided. Now finish it.",
+    "Show up before you're ready. Ready is a myth."
+  ];
+
+  const ESTEEM_A = [
+    "You are not your worst day, and you are not your best one either. You're the average, and it's decent.",
+    "Needing rest doesn't undo your effort. It's part of it.",
+    "You are allowed to take up space with your goals.",
+    "Struggling with something doesn't mean you're bad at it. It means you're doing it.",
+    "You don't have to earn basic kindness from yourself.",
+    "The parts of you that feel unfinished are still worth showing up for.",
+    "You're doing better than the voice in your head gives you credit for.",
+    "Being hard on yourself was never the same thing as being disciplined.",
+    "You are allowed to be a work in progress and still be whole right now.",
+    "Comparing your day seven to someone else's day two hundred isn't fair to you.",
+    "You are worth the same on your slow days as your productive ones.",
+    "Wanting to be better doesn't mean who you are right now is not enough.",
+    "You've carried things people never noticed. That took real strength.",
+    "Self-respect isn't loud. Sometimes it just looks like trying again.",
+    "You don't need permission to be gentle with yourself today.",
+    "The fact that you're trying at all says something good about you.",
+    "You are more consistent than you think. You just don't keep score of the wins.",
+    "Not feeling confident yet doesn't mean you're not capable.",
+    "You are allowed to outgrow the way you used to talk to yourself.",
+    "You're not too much. You just haven't met the right measure yet."
+  ];
+
+  const ESTEEM_B = [
+    "That's still true on your hardest days.",
+    "Let that be enough for today.",
+    "You don't need to argue yourself out of that.",
+    "Say it again if you need to hear it twice.",
+    "That's not a consolation prize. That's just true.",
+    "Nobody else has to agree for it to be real.",
+    "You're allowed to believe that about yourself.",
+    "Hold onto that when the doubt gets loud.",
+    "That doesn't expire when you have a bad day.",
+    "You don't have to earn the right to believe that.",
+    "Let that sit for a second before you move on.",
+    "That's worth more than any productive streak.",
+    "You're not imagining that. It's real.",
+    "That's yours, whether anyone notices or not.",
+    "Keep that close on the days it's hardest to remember.",
+    "You get to believe that about yourself now.",
+    "That's not soft. That's just accurate.",
+    "It counts even if no one's keeping score.",
+    "Let that be the whole thought for today."
+  ];
+
+  const PHILOSOPHY_A = [
+    { text: "What is in your control is your effort. What happens after that was never yours to hold onto so tightly.", source: "stoic thought" },
+    { text: "You are condemned to choose, and in choosing, you make yourself. There is a strange freedom in that.", source: "existentialist thought" },
+    { text: "The obstacle in the path becomes the path. What stands in your way often becomes the way.", source: "stoic thought" },
+    { text: "The river you step into today is not the one you stepped into yesterday, and neither are you.", source: "early Greek thought" },
+    { text: "Flow like water — it wears down stone not through force, but through refusal to stop.", source: "Taoist thought" },
+    { text: "Meaning is rarely found. More often, it is built, one chosen action at a time.", source: "existentialist thought" },
+    { text: "The mind that is disturbed is disturbed by opinion about a thing, not the thing itself.", source: "stoic thought" },
+    { text: "Act only in ways you'd be willing to see become universal law — including how you treat yourself.", source: "Kantian thought" },
+    { text: "The unexamined day, lived on autopilot, is barely lived at all.", source: "classical thought" },
+    { text: "To do nothing is sometimes the most powerful action — not passivity, but restraint that lets things resolve.", source: "Taoist thought" },
+    { text: "Suffering multiplies when we resist what has already happened. Acceptance isn't defeat, it's efficiency.", source: "stoic thought" },
+    { text: "You do not rise to the level of your goals. You fall to the level of your habits.", source: "pragmatist thought" },
+    { text: "The absurd is not a problem to solve, but a condition to meet with defiance and even joy.", source: "absurdist thought" },
+    { text: "Between stimulus and response there is a space. In that space is your power to choose.", source: "humanist thought" },
+    { text: "Know thyself — not as a slogan, but as the daily, unglamorous work of paying attention.", source: "classical thought" },
+    { text: "A person who has a why to live can bear almost any how.", source: "existentialist thought" },
+    { text: "The soft overcomes the hard, the slow overcomes the fast, given enough time.", source: "Taoist thought" },
+    { text: "Amor fati — not just accepting your fate, but learning to want exactly what happened.", source: "existentialist thought" },
+    { text: "We suffer more in imagination than in reality, more often than we'd like to admit.", source: "stoic thought" },
+    { text: "The good life is a process, not a state of being. It's a direction, not a destination.", source: "humanist thought" }
+  ];
+
+  const PHILOSOPHY_B = [
+    "Carry that with you the next time today gets hard.",
+    "You don't have to solve it today. Just notice it.",
+    "That's worth returning to more than once.",
+    "Let that reframe the next decision you make.",
+    "It doesn't need to be resolved, only understood.",
+    "Sit with that instead of rushing past it.",
+    "That's a quieter kind of strength than people expect.",
+    "Let that shape how you treat yourself today, too.",
+    "It's simple to say and hard to actually live.",
+    "That's easy to agree with and harder to practice.",
+    "Test that against something that happened this week.",
+    "You'll recognize it more the next time it applies.",
+    "That's less a rule and more a lens.",
+    "Let it sit somewhere in the back of today.",
+    "It won't feel true until you've lived it once.",
+    "That's worth more in practice than in theory.",
+    "Notice where that already shows up in your life.",
+    "That's not advice. It's just a way of seeing.",
+    "Return to that the next time you're stuck."
+  ];
+
+  // Two independently-sized banks per category. Since their lengths share no
+  // common factor smaller than ~380, the (A, B) pairing is unique for every
+  // day of a full year before anything repeats — a real daily line, not a
+  // 3-week loop, without needing 365 hand-written entries.
+  function pickCombo(arrA, arrB, offsetA, offsetB){
+    const doy = dayOfYear(today);
+    return {
+      a: arrA[(doy + offsetA) % arrA.length],
+      b: arrB[(doy + offsetB) % arrB.length]
+    };
+  }
+
+  const moti = pickCombo(MOTIVATION_A, MOTIVATION_B, 0, 4);
+  document.getElementById('motivation').textContent = moti.a + ' ' + moti.b;
+
+  const est = pickCombo(ESTEEM_A, ESTEEM_B, 7, 2);
+  document.getElementById('esteem').textContent = est.a + ' ' + est.b;
+
+  const phil = pickCombo(PHILOSOPHY_A, PHILOSOPHY_B, 3, 9);
+  document.getElementById('philosophy').textContent = phil.a.text + ' ' + phil.b;
+  document.getElementById('philosophySource').textContent = '— ' + phil.a.source;
+
+  /* ---------------- daily log ---------------- */
+  const logInput = document.getElementById('logInput');
+  const logKey = 'present_log_' + todayKey;
+  logInput.value = localStorage.getItem(logKey) || '';
+  logInput.addEventListener('input', () => localStorage.setItem(logKey, logInput.value));
+
+  /* ---------------- welcome notification on install ---------------- */
+  (function setupInstallWelcome(){
+    const NOTIFIED_KEY = 'present_install_notified';
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (!isStandalone) return;
+    if (localStorage.getItem(NOTIFIED_KEY)) return;
+    if (!('Notification' in window)) return;
+
+    const fire = () => {
+      try {
+        new Notification('Prove It', { body: "You've added this to your home screen. Glad you're here." });
+        localStorage.setItem(NOTIFIED_KEY, '1');
+      } catch(e){ /* some browsers require the service worker route instead — fail quietly */ }
+    };
+
+    if (Notification.permission === 'granted'){
+      fire();
+    } else if (Notification.permission !== 'denied'){
+      Notification.requestPermission().then(perm => { if (perm === 'granted') fire(); });
+    }
+  })();
+
+  /* ---------------- support / donation ---------------- */
+  const btcCopy = document.getElementById('btcCopy');
+  const btcAddress = document.getElementById('btcAddress');
+  btcCopy.addEventListener('click', () => {
+    const addr = btcAddress.textContent.trim();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(addr).then(() => showWhisper('Address copied')).catch(() => showWhisper('Copy failed — long-press to copy'));
+    } else {
+      showWhisper('Long-press the address to copy');
+    }
+  });
+
+  /* ---------------- hidden static note (passcode-gated) ---------------- */
+  const CODE_KEY = 'present_access_code';
+  const NOTE_KEY = 'present_static_note';
+  const secretBtn = document.getElementById('secretBtn');
+  const whisper = document.getElementById('whisper');
+  const veil = document.getElementById('veil');
+  const termBox = document.getElementById('termBox');
+
+  function hasCode(){ return !!localStorage.getItem(CODE_KEY); }
+  function getCode(){ return localStorage.getItem(CODE_KEY) || ''; }
+  function getNote(){ return localStorage.getItem(NOTE_KEY) || ''; }
+
+  function showWhisper(text, isDeny){
+    whisper.textContent = text;
+    whisper.classList.toggle('deny', !!isDeny);
+    whisper.classList.add('show');
+    clearTimeout(showWhisper._t);
+    showWhisper._t = setTimeout(() => whisper.classList.remove('show'), 3200);
+  }
+
+  function closeVeil(){ veil.classList.remove('show'); termBox.innerHTML = ''; }
+
+  function openSetupFlow(){
+    termBox.innerHTML = `
+      <p class="line1">No access code set<span>Choose one to lock a private entry only you can open</span></p>
+      <input type="password" id="codeSet" placeholder="new access code" />
+      <div class="row">
+        <button id="c1">Cancel</button>
+        <button class="primary" id="c2">Next</button>
+      </div>
+    `;
+    veil.classList.add('show');
+    document.getElementById('c1').addEventListener('click', closeVeil);
+    document.getElementById('c2').addEventListener('click', () => {
+      const val = document.getElementById('codeSet').value.trim();
+      if (!val) return;
+      localStorage.setItem(CODE_KEY, val);
+      openNoteEditFlow();
+    });
+  }
+
+  function openNoteEditFlow(){
+    termBox.innerHTML = `
+      <p class="line1">Write your entry<span>A fixed message, visible only behind your code</span></p>
+      <textarea id="noteSet" placeholder="write it here...">${getNote()}</textarea>
+      <div class="row">
+        <button id="n1">Cancel</button>
+        <button class="primary" id="n2">Save</button>
+      </div>
+    `;
+    document.getElementById('n1').addEventListener('click', closeVeil);
+    document.getElementById('n2').addEventListener('click', () => {
+      localStorage.setItem(NOTE_KEY, document.getElementById('noteSet').value);
+      closeVeil();
+      showWhisper('Entry saved');
+    });
+  }
+
+  function openNoteReadFlow(){
+    const note = getNote().trim();
+    termBox.innerHTML = `
+      <p class="line1">Your entry<span>Only you can see this</span></p>
+      <textarea id="noteView" readonly>${note || '(nothing written yet)'}</textarea>
+      <div class="row">
+        <button id="r1">Close</button>
+        <button class="primary" id="r2">Edit</button>
+      </div>
+    `;
+    document.getElementById('r1').addEventListener('click', closeVeil);
+    document.getElementById('r2').addEventListener('click', openNoteEditFlow);
+  }
+
+  function openUnlockFlow(){
+    termBox.innerHTML = `
+      <p class="line1">Locked<span>Enter your code</span></p>
+      <input type="password" id="codeTry" placeholder="code" />
+      <div class="row">
+        <button id="u1">Cancel</button>
+        <button class="primary" id="u2">Unlock</button>
+      </div>
+    `;
+    veil.classList.add('show');
+    setTimeout(() => document.getElementById('codeTry').focus(), 120);
+    document.getElementById('u1').addEventListener('click', closeVeil);
+    const tryUnlock = () => {
+      const val = document.getElementById('codeTry').value;
+      if (val === getCode()){ openNoteReadFlow(); }
+      else { closeVeil(); showWhisper('Access denied', true); }
+    };
+    document.getElementById('u2').addEventListener('click', tryUnlock);
+    document.getElementById('codeTry').addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+  }
+
+  let pressTimer = null;
+  secretBtn.addEventListener('touchstart', () => { pressTimer = setTimeout(triggerSecret, 650); });
+  secretBtn.addEventListener('touchend', () => clearTimeout(pressTimer));
+  secretBtn.addEventListener('mousedown', () => { pressTimer = setTimeout(triggerSecret, 650); });
+  secretBtn.addEventListener('mouseup', () => clearTimeout(pressTimer));
+  secretBtn.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+
+  function triggerSecret(){ if (!hasCode()) openSetupFlow(); else openUnlockFlow(); }
+  function updateLit(){ secretBtn.classList.toggle('lit', hasCode() && getNote().trim().length > 0); }
+  updateLit();
+
+  veil.addEventListener('click', (e) => { if (e.target === veil) { closeVeil(); updateLit(); } });
+
+  /* ---------------- background audio (YouTube embed, not a downloaded file) ---------------- */
+  const AUDIO_MUTE_KEY = 'present_audio_muted';
+  let ytPlayer = null;
+  let ytReady = false;
+  let mutedPref = localStorage.getItem(AUDIO_MUTE_KEY) === '1';
+
+  const soundBtn = document.getElementById('soundBtn');
+  const soundIcon = document.getElementById('soundIcon');
+
+  function paintSoundIcon(){
+    soundIcon.innerHTML = mutedPref
+      ? '<path d="M11 5 6 9H3v6h3l5 4V5Z"></path><path d="M17 9l5 6M22 9l-5 6"></path>'
+      : '<path d="M11 5 6 9H3v6h3l5 4V5Z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>';
+  }
+  paintSoundIcon();
+
+  soundBtn.addEventListener('click', () => {
+    if (!ytPlayer || !ytReady){
+      showWhisper('Still connecting — try again in a moment');
+      return;
+    }
+    mutedPref = !mutedPref;
+    localStorage.setItem(AUDIO_MUTE_KEY, mutedPref ? '1' : '0');
+    paintSoundIcon();
+    if (mutedPref){
+      ytPlayer.mute();
+    } else {
+      // direct tap on this button is a guaranteed real user gesture —
+      // use it to force-start playback as a fallback for platforms
+      // (iOS home-screen apps) where the earlier automatic attempt
+      // may have been silently blocked.
+      ytPlayer.unMute();
+      ytPlayer.setVolume(55);
+      ytPlayer.playVideo();
+    }
+  });
+
+  window.onYouTubeIframeAPIReady = function(){
+    ytPlayer = new YT.Player('ytHolder', {
+      width: '2',
+      height: '2',
+      videoId: 'yGl7errjHWk',
+      playerVars: { autoplay:1, mute:1, controls:0, disablekb:1, fs:0, modestbranding:1, playsinline:1, loop:1, playlist:'yGl7errjHWk' },
+      events: {
+        onReady: function(){
+          ytReady = true;
+          // starts muted automatically so the browser allows it without a tap;
+          // the entry-screen tap then just raises the volume on the stream
+          // that is already quietly running.
+          if (pendingUnmute && !mutedPref){
+            ytPlayer.unMute();
+            ytPlayer.setVolume(55);
+            pendingUnmute = false;
+          }
+        },
+        onError: function(){
+          audioFailed = true;
+          showWhisper('Audio failed to load — try the speaker icon again');
+        }
+      }
+    });
+  };
+
+  // If the YouTube API script itself never loads or initializes (blocked
+  // network, ad-blocker, etc.), surface that clearly instead of staying
+  // silently broken with no feedback.
+  setTimeout(() => {
+    if (!ytReady){
+      audioFailed = true;
+      showWhisper("Music couldn't load — check your connection");
+    }
+  }, 8000);
+
+  const ytScript = document.createElement('script');
+  ytScript.src = 'https://www.youtube.com/iframe_api';
+  ytScript.onerror = () => {
+    audioFailed = true;
+    showWhisper("Couldn't reach YouTube at all — likely blocked");
+  };
+  document.head.appendChild(ytScript);
+
+  /* ---------------- entry gate ---------------- */
+  let pendingUnmute = false;
+  let audioFailed = false;
+  const gate = document.getElementById('gate');
+  gate.addEventListener('click', () => {
+    gate.classList.add('hidden');
+    document.querySelector('.app').classList.add('entered');
+    if (mutedPref) return;
+    if (ytPlayer && ytReady){
+      ytPlayer.unMute();
+      ytPlayer.setVolume(55);
+      ytPlayer.playVideo();
+    } else {
+      // API/player hasn't finished loading yet — unmute as soon as it is ready
+      pendingUnmute = true;
+    }
+  }, { once: true });
+
+  /* ---------------- init ---------------- */
+  const isNewYearDay = (today.getMonth() === 0 && today.getDate() === 1);
+
+  if (isNewYearDay){
+    let totalConfirmed = 0;
+    Object.keys(store).forEach(k => { if (store[k] && store[k].confirmed) totalConfirmed++; });
+    document.querySelector('.app').innerHTML = `
+      <div class="finale">
+        <p class="finale-tag">${today.getFullYear()}</p>
+        <h1 class="finale-title">We did it.</h1>
+        <p class="finale-body">You made it to January 1st. Whatever came before this day — the days you showed up and the days you didn't — you're here now. That's the whole point.</p>
+        <p class="finale-stat">${totalConfirmed} day${totalConfirmed === 1 ? '' : 's'} confirmed along the way.</p>
+        <p class="finale-foot">A new stretch starts today, whenever you're ready for it.</p>
+      </div>
+    `;
+  } else {
+    renderHabits();
+    renderWeek();
+    renderYearmap();
+    renderStreak();
+  }
+
+  if ('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
